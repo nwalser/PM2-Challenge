@@ -24,12 +24,9 @@ void Communicator::run(){
         value_message *message = _value_messages.try_get();
 
         if(message){
-            printf("{\"value_type\": %d, \"value\": %lf} \n", message->type, message->value);
+            printf("{\"t\": %d, \"v\": %lf} \n", message->type, message->value);
 
             _value_messages.free(message);
         }
-
-
-        ThisThread::sleep_for(1ms);
     }
 }

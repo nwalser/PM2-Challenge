@@ -14,21 +14,21 @@ Thread t3;
 void producer1() {
   while (true) {
     communicator->send_value(Communicator::value_type::gyro_x, 10.1);
-    ThisThread::sleep_for(4s);
+    ThisThread::sleep_for(1000ms);
   }
 }
 
 void producer2() {
   while (true) {
     communicator->send_value(Communicator::value_type::gyro_y, 10.54);
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(120ms);
   }
 }
 
 void producer3() {
   while (true) {
     communicator->send_value(Communicator::value_type::gyro_z, 213);
-    ThisThread::sleep_for(1100ms);
+    ThisThread::sleep_for(100ms);
   }
 }
 
@@ -36,7 +36,7 @@ void producer3() {
 int main() {
   t1.start(producer1);
   t2.start(producer2);
-  t2.start(producer3);
+  t3.start(producer3);
 
   while (true) {
     ThisThread::sleep_for(1s);
