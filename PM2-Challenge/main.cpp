@@ -1,43 +1,49 @@
 #include "communication.h"
 #include "mbed.h"
 #include <cstdio>
+#include "robot.h"
+
+
 
 BufferedSerial serial(USBTX, USBRX, 115200);
 Communicator *communicator = new Communicator();
 
 FileHandle *mbed::mbed_override_console(int fd) { return &serial; }
 
-Thread t1;
-Thread t2;
-Thread t3;
+Robot *robot = new Robot();
 
-void producer1() {
-  while (true) {
-    communicator->send_value(Communicator::value_type::gyro_x, 10.1);
-    ThisThread::sleep_for(1000ms);
-  }
-}
-
-void producer2() {
-  while (true) {
-    communicator->send_value(Communicator::value_type::gyro_y, 10.54);
-    ThisThread::sleep_for(120ms);
-  }
-}
-
-void producer3() {
-  while (true) {
-    communicator->send_value(Communicator::value_type::gyro_z, 213);
-    ThisThread::sleep_for(100ms);
-  }
-}
 
 // main() runs in its own thread in the OS
 int main() {
-  t1.start(producer1);
-  t2.start(producer2);
-  t3.start(producer3);
+  
+  robot->move_forward(2.0);
+  
 
+
+
+
+
+
+
+
+
+
+  // states and actual state for state machine
+   /* const int State_forward_both_wheels= 0;
+    const int State_forward_front_wheels= 0;
+    const int State_forward_back_wheels= 0;    
+    const int State_hochklappen_front= 0;    
+    const int State_hochklappen_back= 0; 
+    const int State_runterklappen_front= 0; 
+    const int State_runterklappen_back= 0;
+    const int State_hochklappen_both= 0; 
+    const int State_runterklappen_both= 0; 
+
+
+    const int ROBOT_STATE_FORWARD  = 1;
+    const int ROBOT_STATE_BACKWARD = 2;
+    const int ROBOT_STATE_SLEEP    = 3;
+*/
   while (true) {
     ThisThread::sleep_for(1s);
   }
