@@ -1,24 +1,33 @@
+#ifndef SERVOCONTROLLER_H
+#define SERVOCONTROLLER_H
+
+#include "Map.h"
 #include "Motion.h"
 #include "Servo.h"
+#include "TimeDelta.h"
 
 class ServoController {
 public:
-  ServoController(Motion *motion_planner, Servo *servo);
+  ServoController(Servo *servo, Motion *motion_planner, Map *angle_map);
   void init();
   void move_to(double angle_in_deg);
-  bool is_on_desired_position();
-  void wait_until_idle();
+  bool is_on_position();
+  bool is_initialized();
 
 private:
+  bool _initialized;
+  bool _position_reached;
   double _desired_angle;
-  long _last_micros;
+  const double ALLOWED_SERVO_OFFSET = 0.1;
 
   Servo *_servo;
   Motion *_motion_planner;
+  Map *_angle_map;
+  TimeDelta _time_delta;
 
   Thread _run_thread;
 
   void run();
-  double calculate_new_angle();
-  double angle_to_normalised_angle(double angle);
 };
+
+#endif

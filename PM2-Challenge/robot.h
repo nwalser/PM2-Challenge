@@ -1,7 +1,9 @@
+#ifndef ROBOT_H
+#define ROBOT_H
+
 #include "ServoController.h"
 #include "mbed.h"
 #include "rtos.h"
-
 
 class Robot {
 public:
@@ -19,3 +21,5 @@ private:
   Thread _run_thread;
   void run();
 };
+
+#endif

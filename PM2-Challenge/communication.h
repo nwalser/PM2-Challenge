@@ -1,6 +1,8 @@
+#ifndef COMMUNICATION_H
+#define COMMUNICATION_H
+
 #include "mbed.h"
 #include "rtos.h"
-
 
 class Communicator {
 public:
@@ -21,3 +23,5 @@ private:
   Thread _dispatcher_thread;
   void run();
 };
+
+#endif
