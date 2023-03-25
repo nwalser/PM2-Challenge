@@ -3,8 +3,8 @@
 
 class TimeDelta {
 public:
-  long get_micros_delta();
-  double get_second_delta();
+  long GetMicrosDelta();
+  double GetSecondsDelta();
 
 private:
   long _last_micros;

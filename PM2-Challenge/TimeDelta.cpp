@@ -2,7 +2,7 @@
 #include "mbed.h"
 #include <cstdio>
 
-long TimeDelta::get_micros_delta() {
+long TimeDelta::GetMicrosDelta() {
   using namespace std::chrono;
 
   auto now_ms = time_point_cast<microseconds>(Kernel::Clock::now());
@@ -14,6 +14,6 @@ long TimeDelta::get_micros_delta() {
   return micros_delta;
 }
 
-double TimeDelta::get_second_delta() {
-  return (double)get_micros_delta() / 1000000;
+double TimeDelta::GetSecondsDelta() {
+  return (double)GetMicrosDelta() / 1000000;
 }

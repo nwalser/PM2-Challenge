@@ -6,14 +6,14 @@ Robot::Robot(ServoController *servo_joint_front,
   _servo_joint_back = servo_joint_back;
 
   // start background thread
-  _run_thread.start(callback(this, &Robot::run));
+  _run_thread.start(callback(this, &Robot::Run));
 }
 
-void Robot::move_joint_front(double angle_in_deg, bool move_tires) {
-  _servo_joint_front->move_to(angle_in_deg);
+void Robot::MoveJointFront(double angle_in_deg, bool move_tires) {
+  _servo_joint_front->MoveTo(angle_in_deg);
 }
 
-void Robot::run() {
+void Robot::Run() {
   while (true) {
   }
 }

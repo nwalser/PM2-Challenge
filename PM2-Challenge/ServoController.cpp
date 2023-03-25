@@ -7,27 +7,28 @@ ServoController::ServoController(Servo *servo, Motion *motion_planner,
   _motion_planner = motion_planner;
   _angle_map = angle_map;
 
-  _run_thread.start(callback(this, &ServoController::run));
   _initialized = false;
+  _position_reached = false;
+
+  _run_thread.start(callback(this, &ServoController::Run));
 }
 
-void ServoController::move_to(double angle_in_deg) {
+void ServoController::MoveTo(double angle_in_deg) {
   _desired_angle = angle_in_deg;
   _position_reached = false;
 }
 
-void ServoController::init() {
+void ServoController::Init() {
   _motion_planner->set(0, 0);
   _desired_angle = 0;
   _initialized = true;
-  _position_reached = false;
 }
 
-bool ServoController::is_on_position() { return _position_reached; }
+bool ServoController::IsOnPosition() { return _position_reached; }
 
-bool ServoController::is_initialized() { return _initialized; }
+bool ServoController::IsInitialized() { return _initialized; }
 
-void ServoController::run() {
+void ServoController::Run() {
   while (true) {
     if (!_position_reached) {
       // enable the servo if it is not enabled
@@ -36,10 +37,10 @@ void ServoController::run() {
       }
 
       // calculate new angle and apply
-      double seconds_delta = _time_delta.get_second_delta();
+      double seconds_delta = _time_delta.GetSecondsDelta();
       _motion_planner->incrementToPosition(_desired_angle, seconds_delta);
       double angle = _motion_planner->getPosition();
-      double normalised_angle = _angle_map->map(angle);
+      double normalised_angle = _angle_map->MapValue(angle);
 
       _servo->setNormalisedAngle(normalised_angle);
 

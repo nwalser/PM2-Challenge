@@ -9,10 +9,10 @@
 class ServoController {
 public:
   ServoController(Servo *servo, Motion *motion_planner, Map *angle_map);
-  void init();
-  void move_to(double angle_in_deg);
-  bool is_on_position();
-  bool is_initialized();
+  void Init();
+  void MoveTo(double angle_in_deg);
+  bool IsOnPosition();
+  bool IsInitialized();
 
 private:
   bool _initialized;
@@ -27,7 +27,7 @@ private:
 
   Thread _run_thread;
 
-  void run();
+  void Run();
 };
 
 #endif

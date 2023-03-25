@@ -9,7 +9,7 @@ public:
   Map(double input_start, double input_end, double output_start,
       double output_end);
 
-  double map(double input);
+  double MapValue(double input);
 
 private:
   double _input_start;

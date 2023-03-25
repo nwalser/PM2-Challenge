@@ -8,7 +8,7 @@ Map::Map(double input_start, double input_end, double output_start,
   _output_end = output_end;
 }
 
-double Map::map(double input) {
+double Map::MapValue(double input) {
   if (input > _input_end) {
     return _output_end;
   }

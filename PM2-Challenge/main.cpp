@@ -38,9 +38,9 @@ int main() {
   motion_planner_back->setLimits(50, 30, 30);
   motion_planner_front->setLimits(50, 30, 30);
 
-  servo_controller_back->init();
-  servo_controller_front->init();
-  WAIT_UNTIL_TRUE(servo_controller_back->is_initialized());
+  servo_controller_back->Init();
+  servo_controller_front->Init();
+  WAIT_UNTIL_TRUE(servo_controller_back->IsInitialized());
 
   printf("Ready \n");
   // wait until blue user button is pressed
@@ -48,14 +48,14 @@ int main() {
 
   while (true) {
     printf("Move to 0 \n");
-    servo_controller_back->move_to(0);
-    servo_controller_front->move_to(0);
-    WAIT_UNTIL_TRUE(servo_controller_back->is_on_position());
+    servo_controller_back->MoveTo(0);
+    servo_controller_front->MoveTo(0);
+    WAIT_UNTIL_TRUE(servo_controller_back->IsOnPosition());
 
     printf("Move to 180 \n");
-    servo_controller_back->move_to(180);
-    servo_controller_front->move_to(180);
-    WAIT_UNTIL_TRUE(servo_controller_back->is_on_position());
+    servo_controller_back->MoveTo(180);
+    servo_controller_front->MoveTo(180);
+    WAIT_UNTIL_TRUE(servo_controller_back->IsOnPosition());
   }
 
   while (true) {
