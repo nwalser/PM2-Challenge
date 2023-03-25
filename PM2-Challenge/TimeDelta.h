@@ -3,11 +3,13 @@
 
 class TimeDelta {
 public:
+  void Reset();
   long GetMicrosDelta();
   double GetSecondsDelta();
 
 private:
   long _last_micros;
+  long GetCurrentMicros();
 };
 
 #endif

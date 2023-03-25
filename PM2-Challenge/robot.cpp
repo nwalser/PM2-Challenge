@@ -10,7 +10,7 @@ Robot::Robot(ServoController *servo_joint_front,
 }
 
 void Robot::MoveJointFront(double angle_in_deg, bool move_tires) {
-  _servo_joint_front->MoveTo(angle_in_deg);
+  _servo_joint_front->SetAngle(angle_in_deg);
 }
 
 void Robot::Run() {

@@ -9,15 +9,24 @@
 class ServoController {
 public:
   ServoController(Servo *servo, Motion *motion_planner, Map *angle_map);
-  void Init();
-  void MoveTo(double angle_in_deg);
-  bool IsOnPosition();
-  bool IsInitialized();
+  void Init(double angle_in_deg = 0);
+  void SetAngle(double angle_in_deg);
+  bool IsIdle();
 
 private:
-  bool _initialized;
-  bool _position_reached;
+  enum States {
+    NotReady,
+    Idle,
+    StartMoving,
+    Moving,
+    StopMoving,
+    Initializing,
+  };
+
+  States _state; 
   double _desired_angle;
+  double _init_angle;
+  bool _initialize;
   const double ALLOWED_SERVO_OFFSET = 0.1;
 
   Servo *_servo;
@@ -26,6 +35,8 @@ private:
   TimeDelta _time_delta;
 
   Thread _run_thread;
+
+  bool OnPosition();
 
   void Run();
 };

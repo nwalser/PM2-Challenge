@@ -7,51 +7,97 @@ ServoController::ServoController(Servo *servo, Motion *motion_planner,
   _motion_planner = motion_planner;
   _angle_map = angle_map;
 
-  _initialized = false;
-  _position_reached = false;
+  _initialize = false;
+  _state = States::NotReady;
 
   _run_thread.start(callback(this, &ServoController::Run));
 }
 
-void ServoController::MoveTo(double angle_in_deg) {
+void ServoController::SetAngle(double angle_in_deg) {
   _desired_angle = angle_in_deg;
-  _position_reached = false;
+
+  // wait for 10ms to be sure that the state machine got the chance to flip to
+  // the correct state
+  ThisThread::sleep_for(10ms);
 }
 
-void ServoController::Init() {
-  _motion_planner->set(0, 0);
-  _desired_angle = 0;
-  _initialized = true;
+void ServoController::Init(double angle_in_deg) {
+  _init_angle = angle_in_deg;
+  _initialize = true;
+  
+  // wait for 10ms to be sure that the state machine got the chance to flip to
+  // the correct state
+  ThisThread::sleep_for(10ms);
 }
 
-bool ServoController::IsOnPosition() { return _position_reached; }
+bool ServoController::IsIdle() { return _state == States::Idle; }
 
-bool ServoController::IsInitialized() { return _initialized; }
+bool ServoController::OnPosition() {
+  return fabs(_desired_angle - _motion_planner->position) <
+         ALLOWED_SERVO_OFFSET;
+}
 
 void ServoController::Run() {
   while (true) {
-    if (!_position_reached) {
-      // enable the servo if it is not enabled
-      if (!_servo->isEnabled()) {
-        _servo->enable();
+    switch (_state) {
+    case States::NotReady: {
+      if (_initialize) {
+        _state = States::Initializing;
       }
+      break;
+    }
 
+    case States::Initializing: {
+      _motion_planner->set(0, 0);
+      _desired_angle = 0;
+      double normalised_angle = _angle_map->MapValue(0);
+
+      _servo->enable();
+      _servo->setNormalisedAngle(normalised_angle);
+
+      // wait because we dont know where the servo is
+      ThisThread::sleep_for(500ms);
+      _servo->disable();
+
+      _state = States::Idle;
+      break;
+    }
+
+    case States::Idle: {
+      if (!OnPosition()) {
+        _state = States::StartMoving;
+      }
+      break;
+    }
+
+    case States::StartMoving: {
+      _servo->enable();
+      _time_delta.Reset();
+
+      _state = States::Moving;
+      break;
+    }
+
+    case States::Moving: {
       // calculate new angle and apply
       double seconds_delta = _time_delta.GetSecondsDelta();
       _motion_planner->incrementToPosition(_desired_angle, seconds_delta);
       double angle = _motion_planner->getPosition();
       double normalised_angle = _angle_map->MapValue(angle);
-
       _servo->setNormalisedAngle(normalised_angle);
 
-      // check if we reached destination position to disable servo
-      _position_reached = fabs(_desired_angle - _motion_planner->position) <
-                          ALLOWED_SERVO_OFFSET;
-    } else {
-      // disable the servo if it is not disabled
-      if (_servo->isEnabled()) {
-        _servo->disable();
+      if (OnPosition()) {
+        _state = States::StopMoving;
       }
+      break;
+    }
+
+    case States::StopMoving: {
+      _servo->disable();
+
+      _state = States::Idle;
+      break;
+    }
     }
 
     // run approximately every 5ms
