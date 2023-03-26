@@ -12,16 +12,25 @@ public:
         PositionController *position_controller_front,
         PositionController *position_controller_back);
 
+  enum JointCorrectionMode {
+    None,
+    Front,
+    Back,
+    Both,
+  };
+
   void init();
 
   void drive(double distance_in_mm);
 
   bool isIdle();
 
-  void standUp();
-  void bowForward();
-  void bowBackward();
-  void sitDown();
+  void standUp(JointCorrectionMode mode = JointCorrectionMode::Back);
+  void bowForward(JointCorrectionMode mode = JointCorrectionMode::Back);
+  void bowBackward(JointCorrectionMode mode = JointCorrectionMode::Back);
+  void sitDown(JointCorrectionMode mode = JointCorrectionMode::Back);
+  void setJointAngles(double back, double front,
+                      JointCorrectionMode mode = JointCorrectionMode::Back);
 
 private:
   enum States {
@@ -35,6 +44,8 @@ private:
   };
 
   States _state;
+  JointCorrectionMode _joint_correction_mode;
+
   bool _initialize;
   double _commanded_angle_front;
   double _commanded_angle_back;

@@ -27,37 +27,54 @@ void Robot::init() {
   ThisThread::sleep_for(10ms);
 }
 
-void Robot::standUp() {
+void Robot::standUp(JointCorrectionMode mode) {
+  _joint_correction_mode = mode;
   _commanded_angle_back = 0;
   _commanded_angle_front = 0;
 
   ThisThread::sleep_for(10ms);
 }
 
-void Robot::sitDown() {
+void Robot::sitDown(JointCorrectionMode mode) {
+  _joint_correction_mode = mode;
   _commanded_angle_back = 90;
   _commanded_angle_front = 90;
 
   ThisThread::sleep_for(10ms);
 }
 
-void Robot::bowForward() {
+void Robot::bowForward(JointCorrectionMode mode) {
+  _joint_correction_mode = mode;
   _commanded_angle_back = 0;
   _commanded_angle_front = 135;
 
   ThisThread::sleep_for(10ms);
 }
 
-void Robot::bowBackward() {
+void Robot::bowBackward(JointCorrectionMode mode) {
+  _joint_correction_mode = mode;
   _commanded_angle_back = 135;
   _commanded_angle_front = 0;
 
   ThisThread::sleep_for(10ms);
 }
 
-bool Robot::isIdle() {
-  return _servo_joint_back->isIdle() && _servo_joint_front->isIdle();
+void Robot::setJointAngles(double back, double front,
+                           JointCorrectionMode mode) {
+  _joint_correction_mode = mode;
+  _commanded_angle_back = back;
+  _commanded_angle_front = front;
+
+  ThisThread::sleep_for(10ms);
 }
+
+void Robot::drive(double distance_in_mm) {
+  _commanded_relative_movement = distance_in_mm;
+
+  ThisThread::sleep_for(10ms);
+}
+
+bool Robot::isIdle() { return _state == States::Idle; }
 
 void Robot::run() {
   while (true) {
@@ -73,6 +90,8 @@ void Robot::run() {
     case States::Initializing: {
       _servo_joint_front->init(0);
       _servo_joint_back->init(0);
+      _position_controller_back->setDesiredRotation(0);
+      _commanded_relative_movement = 0;
       _commanded_angle_back = 0;
       _commanded_angle_front = 0;
 
@@ -82,25 +101,29 @@ void Robot::run() {
 
     case States::Idle: {
       if (!onPosition()) {
-        _state = States::Driving;
+        _state = States::StartDriving;
       }
       if (!onPose()) {
-        _state = States::ChangingPose;
+        _state = States::StartChangingPose;
       }
       break;
     }
 
     case States::StartChangingPose: {
-      // feed positions into servos, let them controll the angle
-      _servo_joint_front->setAngle(_commanded_angle_front);
-      _servo_joint_back->setAngle(_commanded_angle_back);
+      _last_tire_distance = getCurrentTireDistance();
 
-      double current_tire_distance = getCurrentTireDistance();
-      _last_tire_distance = current_tire_distance;
+      _position_controller_back->setMaxAccelerationRPS(1);
+      _position_controller_front->setMaxAccelerationRPS(1);
+
+      _state = States::ChangingPose;
       break;
     }
 
     case States::ChangingPose: {
+      // feed positions into servo controllers, let them controll the angle
+      _servo_joint_front->setAngle(_commanded_angle_front);
+      _servo_joint_back->setAngle(_commanded_angle_back);
+
       // controll tires/tire as slaves of the position of the servos, yes the
       // tires will lag behind, but as long as the cycle time is low enough this
       // should not pose a problem.
@@ -109,9 +132,26 @@ void Robot::run() {
       _last_tire_distance = current_tire_distance;
       double delta_rotation = calculateTireRotation(tire_distance_delta);
 
-      double desired_rotation = _position_controller_back->getDesiredRotation();
-      _position_controller_back->setDesiredRotation(desired_rotation +
-                                                    delta_rotation);
+      switch (_joint_correction_mode) {
+      case JointCorrectionMode::None: {
+        break;
+      }
+      case JointCorrectionMode::Back: {
+        _position_controller_back->setDesiredRotationRelative(delta_rotation);
+        break;
+      }
+      case JointCorrectionMode::Front: {
+        _position_controller_front->setDesiredRotationRelative(-delta_rotation);
+        break;
+      }
+      case JointCorrectionMode::Both: {
+        _position_controller_back->setDesiredRotationRelative(delta_rotation /
+                                                              2);
+        _position_controller_front->setDesiredRotationRelative(-delta_rotation /
+                                                               2);
+        break;
+      }
+      }
 
       if (onPose()) {
         _state = States::Idle;
@@ -125,17 +165,19 @@ void Robot::run() {
           calculateTireRotation(_commanded_relative_movement);
       _commanded_relative_movement = 0;
 
-      double desired_rotation = _position_controller_back->getDesiredRotation();
-      _position_controller_back->setDesiredRotation(desired_rotation +
-                                                    delta_rotation);
+      _position_controller_back->setMaxAccelerationRPS(0.2);
+      _position_controller_front->setMaxAccelerationRPS(0.2);
+
+      _position_controller_back->setDesiredRotationRelative(delta_rotation);
+      _position_controller_front->setDesiredRotationRelative(-delta_rotation);
 
       _state = States::Driving;
       break;
     }
 
     case States::Driving: {
-      if (onPosition()) {
-        _state = States::Driving;
+      if (_position_controller_back->isIdle()) {
+        _state = States::Idle;
       }
       break;
     }
@@ -154,7 +196,7 @@ bool Robot::onPose() {
   return back_on_angle & front_on_angle;
 }
 
-bool Robot::onPosition() { return _commanded_relative_movement < EPS; }
+bool Robot::onPosition() { return fabs(_commanded_relative_movement) < EPS; }
 
 double Robot::calculateTireRotation(double distance) {
   double tire_circumference = TIRE_RADIUS * 2 * PI;

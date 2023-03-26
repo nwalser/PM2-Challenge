@@ -28,6 +28,7 @@ FileHandle *mbed::mbed_override_console(int fd) { return &serial; }
 
 int main() {
 #pragma region dependency creation
+  printf("Start \n");
 
   // create user button
   DigitalIn *user_button = new DigitalIn(BUTTON1);
@@ -56,7 +57,7 @@ int main() {
   // original k_gear value was 100, this was to low, don't know why :)
   const float k_gear = 120.0f / 78.125f;
   const float kp = 0.05f;
-  float max_speed_rps = 0.2f;
+  float max_speed_rps = 0.5f;
 
   // create back motor controller
   FastPWM pwm_back(PA_10);
@@ -95,12 +96,26 @@ int main() {
   enable_motors.write(1);
 
   while (true) {
+    printf("Up \n");
     robot->standUp();
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
 
+    printf("Down \n");
     robot->sitDown();
     WAIT_UNTIL_TRUE(robot->isIdle());
+
+    printf("Bow Back \n");
+    robot->bowBackward();
+    WAIT_UNTIL_TRUE(robot->isIdle());
+
+    printf("Bow Front \n");
+    robot->bowForward();
+    WAIT_UNTIL_TRUE(robot->isIdle());
+
+    printf("Drive \n");
+    robot->drive(300);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+
     ThisThread::sleep_for(1s);
   }
 
