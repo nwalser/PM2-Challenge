@@ -9,16 +9,18 @@ class Robot {
 public:
   Robot(ServoController *servo_joint_front, ServoController *servo_joint_back);
 
-  void MoveForward(double distance_in_mm);
-  void MoveBackward(double distance_in_mm);
-  void MoveJointFront(double angle_in_deg, bool move_tires = true);
-  void MoveJointBack(double angle_in_deg, bool move_tires = true);
+  void drive(double distance_in_mm);
+
+  void standUp();
+  void bendForward();
+  void bendBackward();
+  void flatOut();
 
 private:
   ServoController *_servo_joint_front;
   ServoController *_servo_joint_back;
   Thread _run_thread;
-  void Run();
+  void run();
 };
 
 #endif

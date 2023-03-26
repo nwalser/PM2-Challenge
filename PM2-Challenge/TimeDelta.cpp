@@ -2,11 +2,11 @@
 #include "mbed.h"
 #include <cstdio>
 
-void TimeDelta::Reset() {
-    _last_micros = GetCurrentMicros();
+void TimeDelta::reset() {
+    _last_micros = getCurrentMicros();
 }
 
-long TimeDelta::GetCurrentMicros() {
+long TimeDelta::getCurrentMicros() {
   using namespace std::chrono;
 
   auto now_ms = time_point_cast<microseconds>(Kernel::Clock::now());
@@ -15,14 +15,14 @@ long TimeDelta::GetCurrentMicros() {
   return current_micros;
 }
 
-long TimeDelta::GetMicrosDelta() {
-  long current_micros = GetCurrentMicros();
+long TimeDelta::getMicrosDelta() {
+  long current_micros = getCurrentMicros();
   long micros_delta = current_micros - _last_micros;
   _last_micros = current_micros;
 
   return micros_delta;
 }
 
-double TimeDelta::GetSecondsDelta() {
-  return (double)GetMicrosDelta() / 1000000;
+double TimeDelta::getSecondsDelta() {
+  return (double)getMicrosDelta() / 1000000;
 }

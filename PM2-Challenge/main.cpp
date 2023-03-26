@@ -28,31 +28,15 @@ Map *angle_map_back = new Map(0, 180, 0.04, 0.1);
 ServoController *servo_controller_back =
     new ServoController(servo_joint_back, motion_planner_back, angle_map_back);
 
-// DANGEROUS!
+// DANGEROUS, BUT USEFULL, MACRO! :D
 #define WAIT_UNTIL_TRUE(func)                                                  \
   while (!(func)) {                                                            \
     ThisThread::sleep_for(10ms);                                               \
   }
 
 #define WAIT_UNTIL_RANGE(func, value, range)                                   \
-  WAIT_UNTIL_TRUE(fabs(positionController_M3->getRotation() - (value)) <       \
-                  (range))
+  WAIT_UNTIL_TRUE(fabs((func) - (value)) < (range))
 
-void move_servos_endless() {
-  while (true) {
-    printf("Move to 0 \n");
-    servo_controller_back->SetAngle(0);
-    servo_controller_front->SetAngle(0);
-    WAIT_UNTIL_TRUE(servo_controller_back->IsIdle());
-
-    printf("Move to 180 \n");
-    servo_controller_back->SetAngle(90);
-    servo_controller_front->SetAngle(180);
-    WAIT_UNTIL_TRUE(servo_controller_back->IsIdle());
-  }
-}
-
-// mail loop. thread is managed by rtos
 int main() {
   // create motor objects
   DigitalOut enable_motors(PB_15);
@@ -78,10 +62,10 @@ int main() {
   motion_planner_back->setLimits(50, 30, 30);
   motion_planner_front->setLimits(50, 30, 30);
 
-  servo_controller_back->Init(0);
-  servo_controller_front->Init();
-  WAIT_UNTIL_TRUE(servo_controller_back->IsIdle() &&
-                  servo_controller_front->IsIdle());
+  servo_controller_back->init(0);
+  servo_controller_front->init();
+  WAIT_UNTIL_TRUE(servo_controller_back->isIdle() &&
+                  servo_controller_front->isIdle());
 
   enable_motors.write(0);
 

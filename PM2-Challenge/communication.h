@@ -15,13 +15,13 @@ public:
     double value;
   } value_message;
 
-  void SendValue(value_type type, double value);
-  void SendValue(value_type type, int value);
+  void sendValue(value_type type, double value);
+  void sendValue(value_type type, int value);
 
 private:
   Mail<value_message, 16> _value_messages;
   Thread _dispatcher_thread;
-  void Run();
+  void run();
 };
 
 #endif

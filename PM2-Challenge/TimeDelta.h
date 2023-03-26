@@ -1,15 +1,19 @@
+/*
+TimeDelta measures the time that has passed between calls to its api.
+*/
+
 #ifndef TIMEDELTA_H
 #define TIMEDELTA_H
 
 class TimeDelta {
 public:
-  void Reset();
-  long GetMicrosDelta();
-  double GetSecondsDelta();
+  void reset();
+  long getMicrosDelta();
+  double getSecondsDelta();
 
 private:
   long _last_micros;
-  long GetCurrentMicros();
+  long getCurrentMicros();
 };
 
 #endif

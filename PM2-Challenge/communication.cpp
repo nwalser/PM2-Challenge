@@ -3,14 +3,14 @@
 #include <cstdio>
 
 Communicator::Communicator(){
-    _dispatcher_thread.start(callback(this, &Communicator::Run));
+    _dispatcher_thread.start(callback(this, &Communicator::run));
 }
 
-void Communicator::SendValue(value_type type, int value){
-    SendValue(type, (double)value);
+void Communicator::sendValue(value_type type, int value){
+    sendValue(type, (double)value);
 }
 
-void Communicator::SendValue(value_type type, double value){
+void Communicator::sendValue(value_type type, double value){
     value_message *message = _value_messages.try_alloc();
 
     message->type=type;
@@ -19,7 +19,7 @@ void Communicator::SendValue(value_type type, double value){
     _value_messages.put(message);
 }
 
-void Communicator::Run(){
+void Communicator::run(){
     while(true){
         value_message *message = _value_messages.try_get();
 

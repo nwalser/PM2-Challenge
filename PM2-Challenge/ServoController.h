@@ -9,9 +9,9 @@
 class ServoController {
 public:
   ServoController(Servo *servo, Motion *motion_planner, Map *angle_map);
-  void Init(double angle_in_deg = 0);
-  void SetAngle(double angle_in_deg);
-  bool IsIdle();
+  void init(double angle_in_deg = 0);
+  void setAngle(double angle_in_deg);
+  bool isIdle();
 
 private:
   enum States {
@@ -36,9 +36,8 @@ private:
 
   Thread _run_thread;
 
-  bool OnPosition();
-
-  void Run();
+  bool onPosition();
+  void run();
 };
 
 #endif
