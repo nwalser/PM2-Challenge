@@ -55,50 +55,50 @@ void move_servos_endless() {
 // mail loop. thread is managed by rtos
 int main() {
   // create motor objects
-  DigitalOut enable_motors(
-      PB_15); // create DigitalOut object to enable dc motors
-  FastPWM pwm_M3(PA_10);
+  DigitalOut enable_motors(PB_15);
+  FastPWM pwm_M3(PB_13);
+
   EncoderCounter encoder_M3(PA_0, PA_1);
   const float max_voltage = 12.0f;
   const float counts_per_turn = 20.0f * 78.125f;
   const float kn = 180.0f / 12.0f;
-  const float k_gear = 100.0f / 78.125f;
-  const float kp = 0.2f;
+  // original k_gear value was 100, this was to low, dont know why :)
+  const float k_gear = 120.0f / 78.125f;
+  const float kp = 0.05f;
+  float max_speed_rps = 0.2f;
+
   PositionController *positionController_M3 = new PositionController(
       counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M3, encoder_M3);
-  float max_speed_rps = 0.5f;
+
+  positionController_M3->setSpeedCntrlGain(kp * k_gear);
+  positionController_M3->setMaxVelocityRPS(max_speed_rps);
 
   // initialize all controlls
   printf("Init \n");
   motion_planner_back->setLimits(50, 30, 30);
   motion_planner_front->setLimits(50, 30, 30);
 
-  positionController_M3->setSpeedCntrlGain(kp * k_gear);
-  positionController_M3->setMaxVelocityRPS(max_speed_rps);
-
   servo_controller_back->Init(0);
   servo_controller_front->Init();
   WAIT_UNTIL_TRUE(servo_controller_back->IsIdle() &&
                   servo_controller_front->IsIdle());
+
+  enable_motors.write(0);
 
   printf("Ready \n");
   // wait until blue user button is pressed
   WAIT_UNTIL_TRUE(!user_button->read());
 
   while (true) {
+    enable_motors.write(1);
+
     printf("Move 0 \n");
     positionController_M3->setDesiredRotation(0);
-    WAIT_UNTIL_RANGE(positionController_M3->getRotation(), 0, 0.1);
+    WAIT_UNTIL_RANGE(positionController_M3->getRotation(), 0, 0.001);
 
     printf("Move 180 \n");
     positionController_M3->setDesiredRotation(0.5);
-
-    while (true) {
-      double pos = positionController_M3->getRotation();
-      printf("Pos: %f \n", pos);
-    }
-
-    WAIT_UNTIL_RANGE(positionController_M3->getRotation(), 0.5, 0.1);
+    WAIT_UNTIL_RANGE(positionController_M3->getRotation(), 0.5, 0.001);
   }
 
   while (true) {
