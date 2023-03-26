@@ -11,6 +11,7 @@ public:
   ServoController(Servo *servo, Motion *motion_planner, Map *angle_map);
   void init(double angle_in_deg = 0);
   void setAngle(double angle_in_deg);
+  double getCurrentAngle();
   bool isIdle();
 
 private:
@@ -27,7 +28,6 @@ private:
   double _desired_angle;
   double _init_angle;
   bool _initialize;
-  const double ALLOWED_SERVO_OFFSET = 0.1;
 
   Servo *_servo;
   Motion *_motion_planner;
@@ -36,7 +36,7 @@ private:
 
   Thread _run_thread;
 
-  bool onPosition();
+  bool onAngle();
   void run();
 };
 

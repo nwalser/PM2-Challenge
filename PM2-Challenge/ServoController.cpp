@@ -1,6 +1,8 @@
 #include "ServoController.h"
 #include <cstdio>
 
+#define EPS 0.001
+
 ServoController::ServoController(Servo *servo, Motion *motion_planner,
                                  Map *angle_map) {
   _servo = servo;
@@ -32,9 +34,12 @@ void ServoController::init(double angle_in_deg) {
 
 bool ServoController::isIdle() { return _state == States::Idle; }
 
-bool ServoController::onPosition() {
-  return fabs(_desired_angle - _motion_planner->position) <
-         ALLOWED_SERVO_OFFSET;
+bool ServoController::onAngle() {
+  return fabs(_desired_angle - _motion_planner->position) < EPS;
+}
+
+double ServoController::getCurrentAngle() {
+  return _motion_planner->getPosition();
 }
 
 void ServoController::run() {
@@ -48,7 +53,7 @@ void ServoController::run() {
     }
 
     case States::Initializing: {
-      _initialize=false;
+      _initialize = false;
 
       _motion_planner->set(0, 0);
       _desired_angle = 0;
@@ -66,7 +71,7 @@ void ServoController::run() {
     }
 
     case States::Idle: {
-      if (!onPosition()) {
+      if (!onAngle()) {
         _state = States::StartMoving;
       }
       break;
@@ -88,7 +93,7 @@ void ServoController::run() {
       double normalised_angle = _angle_map->mapValue(angle);
       _servo->setNormalisedAngle(normalised_angle);
 
-      if (onPosition()) {
+      if (onAngle()) {
         _state = States::StopMoving;
       }
       break;
