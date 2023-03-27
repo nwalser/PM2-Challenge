@@ -10,7 +10,8 @@ class Robot {
 public:
   Robot(ServoController *servo_joint_front, ServoController *servo_joint_back,
         PositionController *position_controller_front,
-        PositionController *position_controller_back);
+        PositionController *position_controller_back,
+        DigitalOut *enable_motors);
 
   enum JointCorrectionMode {
     None,
@@ -63,6 +64,7 @@ private:
   ServoController *_servo_joint_back;
   PositionController *_position_controller_back;
   PositionController *_position_controller_front;
+  DigitalOut *_enable_motors;
 
   double getCurrentTireDistance();
   double calculateTireDistance(double length_arm_center, double length_arm_back,

@@ -9,11 +9,13 @@
 Robot::Robot(ServoController *servo_joint_front,
              ServoController *servo_joint_back,
              PositionController *position_controller_front,
-             PositionController *position_controller_back) {
+             PositionController *position_controller_back,
+             DigitalOut *enable_motors) {
   _servo_joint_front = servo_joint_front;
   _servo_joint_back = servo_joint_back;
   _position_controller_back = position_controller_back;
   _position_controller_front = position_controller_front;
+  _enable_motors = enable_motors;
 
   _initialize = false;
 
@@ -94,6 +96,8 @@ void Robot::run() {
       _commanded_relative_movement = 0;
       _commanded_angle_back = 0;
       _commanded_angle_front = 0;
+
+      _enable_motors->write(1);
 
       _state = States::Idle;
       break;

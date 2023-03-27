@@ -50,7 +50,7 @@ int main() {
       servo_joint_back, motion_planner_back, angle_map_back);
 
   // create motor objects
-  DigitalOut enable_motors(PB_15);
+  DigitalOut *enable_motors = new DigitalOut(PB_15);
   const float max_voltage = 12.0f;
   const float counts_per_turn = 20.0f * 78.125f;
   const float kn = 180.0f / 12.0f;
@@ -79,21 +79,19 @@ int main() {
 
   // create robot object
   Robot *robot = new Robot(servo_controller_front, servo_controller_back,
-                           position_controller_front, position_controller_back);
+                           position_controller_front, position_controller_back,
+                           enable_motors);
 #pragma endregion
 
   // initialize all controlls
   printf("Init \n");
 
-  enable_motors.write(0);
   robot->init();
   WAIT_UNTIL_TRUE(robot->isIdle());
 
   printf("Ready \n");
   // wait until blue user button is pressed
   WAIT_UNTIL_TRUE(!user_button->read());
-
-  enable_motors.write(1);
 
   while (true) {
     printf("Up \n");
