@@ -99,17 +99,41 @@ int main() {
   WAIT_UNTIL_TRUE(!user_button->read());
 
   while (true) {
-    printf("Min \n");
+    printf("Down \n");
+    robot->setJointAngles(0, 135);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->setJointAngles(90, 90);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    printf("Drive \n");
+    robot->drive(300);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->setJointAngles(90, 160);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->drive(200);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+
+    robot->setJointAngles(70, 70);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->drive(200);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
     robot->setJointAngles(0, 0);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    ThisThread::sleep_for(1s);
-
-    printf("Max \n");
-    robot->setJointAngles(160, 160);
-    WAIT_UNTIL_TRUE(robot->isIdle());
-
-    ThisThread::sleep_for(1s);
+    while(true){}
   }
 
   while (true) {

@@ -100,7 +100,7 @@ void ServoController::run() {
     }
 
     case States::StopMoving: {
-      _servo->disable();
+      //_servo->disable();
 
       _state = States::Idle;
       break;

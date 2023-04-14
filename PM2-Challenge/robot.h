@@ -55,10 +55,10 @@ private:
 
   double _commanded_relative_movement;
 
-  double LENGTH_ARM_FRONT = 70;
-  double LENGTH_ARM_BACK = 70;
-  double LENGTH_ARM_CENTER = 83;
-  double TIRE_RADIUS = 40;
+  double LENGTH_ARM_FRONT = 110;
+  double LENGTH_ARM_BACK = 110;
+  double LENGTH_ARM_CENTER = 115;
+  double TIRE_RADIUS = 50;
 
   ServoController *_servo_joint_front;
   ServoController *_servo_joint_back;
