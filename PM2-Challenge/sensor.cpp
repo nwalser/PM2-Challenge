@@ -1,3 +1,5 @@
+/*
+
 #include "sensor.h"
 #include <cmath>
 #include <cstdio>
@@ -6,7 +8,7 @@
 
 Sensor::Sensor(){
 
-_run_thread.start(callback(this, &Sensor::run));
+    _run_thread.start(callback(this, &Sensor::run));
 }
 
 //Coefficents Sensor 1
@@ -36,3 +38,4 @@ return (a_back/(b_back+mV_sensor))
                //ir_distance_mV);}
 
 
+*/

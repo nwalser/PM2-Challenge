@@ -1,3 +1,5 @@
+/*
+
 #ifndef SENSOR_H
 #define SENSOR_H
 
@@ -14,7 +16,7 @@ double calculate_distance_in_mm_back();
 
 
 private:
-/*
+
 //Coefficents Sensor 1
 double a_front= 1.211e04;
 double b_front= 98.69;
@@ -24,10 +26,12 @@ double a_back= 1.175e04;
 double b_back= 25.98;
 
 double mV_sensor=0.0;
-*/
+
 
   Thread _run_thread;
   void run();
 };
 
 #endif
+
+*/
