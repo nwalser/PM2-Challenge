@@ -15,7 +15,7 @@ FileHandle *mbed::mbed_override_console(int fd) { return &serial; }
 
 #pragma region macros
 
-// DANGEROUS, BUT USEFULL, MACRO! :D
+// DANGEROUS, BUT USEFUL, MACRO! :D
 #define WAIT_UNTIL_TRUE(func)                                                  \
   while (!(func)) {                                                            \
     ThisThread::sleep_for(10ms);                                               \
@@ -33,6 +33,7 @@ int main() {
   // create user button
   DigitalIn *user_button = new DigitalIn(BUTTON1);
 
+  // SERVO PC_8
   // create front servo controller
   Servo *servo_joint_front = new Servo(PC_8);
   Motion *motion_planner_front = new Motion();
@@ -41,11 +42,13 @@ int main() {
   ServoController *servo_controller_front = new ServoController(
       servo_joint_front, motion_planner_front, angle_map_front);
 
+  // SERVO PB_2
   // create back servo controller
   Servo *servo_joint_back = new Servo(PB_2);
   Motion *motion_planner_back = new Motion();
   motion_planner_back->setLimits(50, 30, 30);
-  Map *angle_map_back = new Map(0, 120, 0.1, 0.04);
+  //Map *angle_map_back = new Map(0, 120, 0.1, 0.04);
+  Map *angle_map_back = new Map(0, 150, 0.032, 0.11);
   ServoController *servo_controller_back = new ServoController(
       servo_joint_back, motion_planner_back, angle_map_back);
 
@@ -59,15 +62,7 @@ int main() {
   const float kp = 0.05f;
   float max_speed_rps = 0.5f;
 
-  // create back motor controller
-  FastPWM pwm_back(PA_10);
-  EncoderCounter encoder_back(PA_0, PA_1);
-  PositionController *position_controller_back =
-      new PositionController(counts_per_turn * k_gear, kn / k_gear, max_voltage,
-                             pwm_back, encoder_back);
-  position_controller_back->setSpeedCntrlGain(kp * k_gear);
-  position_controller_back->setMaxVelocityRPS(max_speed_rps);
-
+  // m1
   // create front motor controller
   FastPWM pwm_front(PB_13);
   EncoderCounter encoder_front(PA_6, PC_7);
@@ -76,6 +71,16 @@ int main() {
                              pwm_front, encoder_front);
   position_controller_front->setSpeedCntrlGain(kp * k_gear);
   position_controller_front->setMaxVelocityRPS(max_speed_rps);
+
+  // M2
+  // create back motor controller
+  FastPWM pwm_back(PA_9);
+  EncoderCounter encoder_back(PB_6, PB_7);
+  PositionController *position_controller_back =
+      new PositionController(counts_per_turn * k_gear, kn / k_gear, max_voltage,
+                             pwm_back, encoder_back);
+  position_controller_back->setSpeedCntrlGain(kp * k_gear);
+  position_controller_back->setMaxVelocityRPS(max_speed_rps);
 
   // create robot object
   Robot *robot = new Robot(servo_controller_front, servo_controller_back,
@@ -94,24 +99,19 @@ int main() {
   WAIT_UNTIL_TRUE(!user_button->read());
 
   while (true) {
-    printf("Up \n");
-    robot->standUp();
+
+    printf("Move \n");
+    robot->drive(20);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    printf("Down \n");
-    robot->sitDown();
+    printf("Min \n");
+    robot->setJointAngles(0, 0);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    printf("Bow Back \n");
-    robot->bowBackward();
-    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
 
-    printf("Bow Front \n");
-    robot->bowForward();
-    WAIT_UNTIL_TRUE(robot->isIdle());
-
-    printf("Drive \n");
-    robot->drive(300);
+    printf("Max \n");
+    robot->setJointAngles(160, 160);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
     ThisThread::sleep_for(1s);
