@@ -38,7 +38,7 @@ int main() {
   Servo *servo_joint_front = new Servo(PC_8);
   Motion *motion_planner_front = new Motion();
   motion_planner_front->setLimits(50, 30, 30);
-  Map *angle_map_front = new Map(0, 160, 0.032, 0.115);
+  Map *angle_map_front = new Map(9, 175, 0.032, 0.125);
   ServoController *servo_controller_front = new ServoController(
       servo_joint_front, motion_planner_front, angle_map_front);
 
@@ -47,8 +47,7 @@ int main() {
   Servo *servo_joint_back = new Servo(PB_2);
   Motion *motion_planner_back = new Motion();
   motion_planner_back->setLimits(50, 30, 30);
-  //Map *angle_map_back = new Map(0, 120, 0.1, 0.04);
-  Map *angle_map_back = new Map(0, 160, 0.032, 0.115);
+  Map *angle_map_back = new Map(15, 173, 0.032, 0.115);
   ServoController *servo_controller_back = new ServoController(
       servo_joint_back, motion_planner_back, angle_map_back);
 
@@ -99,8 +98,11 @@ int main() {
   WAIT_UNTIL_TRUE(!user_button->read());
 
   while (true) {
-    printf("Down \n");
-    robot->setJointAngles(0, 135);
+    robot->setJointAngles(15, 15);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->setJointAngles(20, 130);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
@@ -108,8 +110,8 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
-    printf("Drive \n");
-    robot->drive(300);
+    // robot is flat on ground
+    robot->drive(150);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
@@ -117,21 +119,48 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
-    robot->drive(200);
+    robot->drive(100);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
-
-    robot->setJointAngles(70, 70);
+    // robot is buckled up against the obstacle
+    robot->setJointAngles(120, 50);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+    
+    robot->drive(100);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
-    robot->drive(200);
+    robot->setJointAngles(70, 25);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(1s);
 
-    robot->setJointAngles(0, 0);
+    // robot stands above the obstacle
+    robot->setJointAngles(15, 15);
     WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->drive(100);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->setJointAngles(15, 135);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    // robot is bowed front over obstacle
+    robot->setJointAngles(90, 120);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->drive(150);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
+
+    robot->setJointAngles(90, 90);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(1s);
 
     while(true){}
   }

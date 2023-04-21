@@ -90,9 +90,11 @@ void Robot::run() {
     }
 
     case States::Initializing: {
-      _servo_joint_front->init(0);
-      _servo_joint_back->init(0);
+      _servo_joint_front->init(20);
+      _servo_joint_back->init(20);
       _position_controller_back->setDesiredRotation(0);
+      _position_controller_front->setDesiredRotation(0);
+
       _commanded_relative_movement = 0;
       _commanded_angle_back = 0;
       _commanded_angle_front = 0;
@@ -137,22 +139,20 @@ void Robot::run() {
       double delta_rotation = calculateTireRotation(tire_distance_delta);
 
       switch (_joint_correction_mode) {
-      case JointCorrectionMode::None: {
-        break;
-      }
-      case JointCorrectionMode::Back: {
-        _position_controller_back->setDesiredRotationRelative(delta_rotation);
-        break;
-      }
-      case JointCorrectionMode::Front: {
-        _position_controller_front->setDesiredRotationRelative(-delta_rotation);
-        break;
-      }
-      case JointCorrectionMode::Both: {
-        _position_controller_back->setDesiredRotationRelative(delta_rotation /
-                                                              2);
-        _position_controller_front->setDesiredRotationRelative(-delta_rotation /
-                                                               2);
+        case JointCorrectionMode::None: {
+            break;
+        }
+        case JointCorrectionMode::Back: {
+            _position_controller_back->setDesiredRotationRelative(delta_rotation);
+            break;
+        }
+        case JointCorrectionMode::Front: {
+            _position_controller_front->setDesiredRotationRelative(-delta_rotation);
+            break;
+        }
+        case JointCorrectionMode::Both: {
+            _position_controller_back->setDesiredRotationRelative(delta_rotation / 2);
+            _position_controller_front->setDesiredRotationRelative(-delta_rotation / 2);
         break;
       }
       }
