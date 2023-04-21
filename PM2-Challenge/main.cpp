@@ -1,3 +1,9 @@
+#if (OS_THREAD_OBJ_MEM == 0) 
+#define OS_THREAD_LIBSPACE_NUM 10
+#else 
+#define OS_THREAD_LIBSPACE_NUM OS_THREAD_NUM 
+#endif
+
 #include "FastPWM.h"
 #include "PositionController.h"
 #include "Servo.h"
@@ -10,7 +16,7 @@
 
 // setup communication stack
 BufferedSerial serial(USBTX, USBRX, 115200);
-Communicator *communicator = new Communicator();
+//Communicator *communicator = new Communicator();
 FileHandle *mbed::mbed_override_console(int fd) { return &serial; }
 
 #pragma region macros
@@ -100,7 +106,7 @@ int main() {
   while (true) {
     robot->setJointAngles(15, 15);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
     robot->setJointAngles(20, 130);
     WAIT_UNTIL_TRUE(robot->isIdle());
@@ -108,64 +114,81 @@ int main() {
 
     robot->setJointAngles(90, 90);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
     // robot is flat on ground
     robot->drive(150);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
-    robot->setJointAngles(90, 160);
+    robot->setJointAngles(90, 160, Robot::JointCorrectionMode::None);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
-    robot->drive(100);
+    robot->drive(120);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
     // robot is buckled up against the obstacle
-    robot->setJointAngles(120, 50);
+    robot->setJointAngles(120, 50, Robot::JointCorrectionMode::None);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
     
     robot->drive(100);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
-    robot->setJointAngles(70, 25);
+    robot->setJointAngles(70, 25, Robot::JointCorrectionMode::Back);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
-
+    ThisThread::sleep_for(50ms);
+    
     // robot stands above the obstacle
-    robot->setJointAngles(15, 15);
+    robot->setJointAngles(15, 15, Robot::JointCorrectionMode::Back);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
+
+    robot->drive(80);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
+
+    robot->setJointAngles(55, 125);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
+
+    robot->drive(80);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
+
+    robot->setJointAngles(155, 90);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
 
     robot->drive(100);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
-
-    robot->setJointAngles(15, 135);
-    WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
-
-    // robot is bowed front over obstacle
-    robot->setJointAngles(90, 120);
-    WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
-
-    robot->drive(150);
-    WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
 
     robot->setJointAngles(90, 90);
     WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
+
+    robot->drive(155);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
+
+
+    // stand up front
+    robot->setJointAngles(115, 0, Robot::JointCorrectionMode::Back);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(4s);
+
+    robot->setJointAngles(0, 0, Robot::JointCorrectionMode::Back);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    ThisThread::sleep_for(50ms);
 
     while(true){}
   }
 
   while (true) {
-    ThisThread::sleep_for(1s);
+    ThisThread::sleep_for(50ms);
   }
 }

@@ -23,6 +23,7 @@ public:
   void init();
 
   void drive(double distance_in_mm);
+  void driveWithBackTire(double distance_in_mm);
 
   bool isIdle();
 
@@ -31,7 +32,7 @@ public:
   void bowBackward(JointCorrectionMode mode = JointCorrectionMode::Back);
   void sitDown(JointCorrectionMode mode = JointCorrectionMode::Back);
   void setJointAngles(double back, double front,
-                      JointCorrectionMode mode = JointCorrectionMode::Back);
+                      JointCorrectionMode mode = JointCorrectionMode::Front);
 
 private:
   enum States {

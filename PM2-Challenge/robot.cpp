@@ -90,8 +90,8 @@ void Robot::run() {
     }
 
     case States::Initializing: {
-      _servo_joint_front->init(20);
-      _servo_joint_back->init(20);
+      _servo_joint_front->init(15);
+      _servo_joint_back->init(15);
       _position_controller_back->setDesiredRotation(0);
       _position_controller_front->setDesiredRotation(0);
 
@@ -138,27 +138,39 @@ void Robot::run() {
       _last_tire_distance = current_tire_distance;
       double delta_rotation = calculateTireRotation(tire_distance_delta);
 
+      //printf("Back: %f Front: %f Delta Rot: %f JCM: %d \n", _position_controller_back->getRotation(), _position_controller_front->getRotation(), delta_rotation, _joint_correction_mode);
+
       switch (_joint_correction_mode) {
         case JointCorrectionMode::None: {
+            //printf("none \n");
             break;
         }
         case JointCorrectionMode::Back: {
-            _position_controller_back->setDesiredRotationRelative(delta_rotation);
+            //printf("%f \n", delta_rotation);
+            _position_controller_back->setDesiredRotationRelative(-delta_rotation);
+            //printf("Rotation set back \n");
             break;
         }
         case JointCorrectionMode::Front: {
-            _position_controller_front->setDesiredRotationRelative(-delta_rotation);
+            //printf("%f \n", delta_rotation);
+            _position_controller_front->setDesiredRotationRelative(delta_rotation);
+            //printf("Rotation set front \n");
+
             break;
         }
         case JointCorrectionMode::Both: {
-            _position_controller_back->setDesiredRotationRelative(delta_rotation / 2);
-            _position_controller_front->setDesiredRotationRelative(-delta_rotation / 2);
-        break;
-      }
+            //printf("%f \n", delta_rotation);
+            _position_controller_back->setDesiredRotationRelative(-delta_rotation / 2);
+            _position_controller_front->setDesiredRotationRelative(delta_rotation / 2);
+            //printf("Rotation set both \n");
+
+            break;
+        }
       }
 
       if (onPose()) {
         _state = States::Idle;
+        printf("On pose  \n");
       }
 
       break;
@@ -173,7 +185,7 @@ void Robot::run() {
       _position_controller_front->setMaxAccelerationRPS(0.2);
 
       _position_controller_back->setDesiredRotationRelative(delta_rotation);
-      _position_controller_front->setDesiredRotationRelative(-delta_rotation);
+      _position_controller_front->setDesiredRotationRelative(delta_rotation);
 
       _state = States::Driving;
       break;
@@ -187,7 +199,7 @@ void Robot::run() {
     }
     }
 
-    ThisThread::sleep_for(5ms);
+    ThisThread::sleep_for(50ms);
   }
 }
 

@@ -107,7 +107,7 @@ void ServoController::run() {
     }
     }
 
-    // run approximately every 5ms
-    ThisThread::sleep_for(5ms);
+    // run approximately every 20ms
+    ThisThread::sleep_for(10ms);
   }
 }
