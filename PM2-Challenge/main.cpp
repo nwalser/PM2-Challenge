@@ -44,7 +44,7 @@ int main() {
   Servo *servo_joint_front = new Servo(PC_8);
   Motion *motion_planner_front = new Motion();
   motion_planner_front->setLimits(50, 30, 30);
-  Map *angle_map_front = new Map(9, 175, 0.032, 0.125);
+  Map *angle_map_front = new Map(0, 170, 0.035, 0.125);
   ServoController *servo_controller_front = new ServoController(
       servo_joint_front, motion_planner_front, angle_map_front);
 
@@ -53,7 +53,7 @@ int main() {
   Servo *servo_joint_back = new Servo(PB_2);
   Motion *motion_planner_back = new Motion();
   motion_planner_back->setLimits(50, 30, 30);
-  Map *angle_map_back = new Map(15, 173, 0.032, 0.115);
+  Map *angle_map_back = new Map(0, 150, 0.035, 0.115);
   ServoController *servo_controller_back = new ServoController(
       servo_joint_back, motion_planner_back, angle_map_back);
 
@@ -95,7 +95,6 @@ int main() {
 
   // initialize all controlls
   printf("Init \n");
-
   robot->init();
   WAIT_UNTIL_TRUE(robot->isIdle());
 
@@ -104,7 +103,7 @@ int main() {
   WAIT_UNTIL_TRUE(!user_button->read());
 
   while (true) {
-    robot->setJointAngles(15, 15);
+    robot->setJointAngles(0, 0);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 

@@ -90,8 +90,8 @@ void Robot::run() {
     }
 
     case States::Initializing: {
-      _servo_joint_front->init(15);
-      _servo_joint_back->init(15);
+      _servo_joint_front->init(0);
+      _servo_joint_back->init(0);
       _position_controller_back->setDesiredRotation(0);
       _position_controller_front->setDesiredRotation(0);
 
