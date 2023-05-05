@@ -79,8 +79,8 @@ int main() {
 
   // M2
   // create back motor controller
-  FastPWM pwm_back(PA_9);
-  EncoderCounter encoder_back(PB_6, PB_7);
+  FastPWM pwm_back(PA_10);
+  EncoderCounter encoder_back(PA_0, PA_1);
   PositionController *position_controller_back =
       new PositionController(counts_per_turn * k_gear, kn / k_gear, max_voltage,
                              pwm_back, encoder_back);
