@@ -44,7 +44,7 @@ int main() {
   Servo *servo_joint_front = new Servo(PC_8);
   Motion *motion_planner_front = new Motion();
   motion_planner_front->setLimits(50, 30, 30);
-  Map *angle_map_front = new Map(0, 170, 0.035, 0.125);
+  Map *angle_map_front = new Map(0, 175, 0.035, 0.125);
   ServoController *servo_controller_front = new ServoController(
       servo_joint_front, motion_planner_front, angle_map_front);
 
@@ -146,7 +146,7 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
-    robot->drive(80);
+    robot->drive(40);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
@@ -154,9 +154,9 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
-    robot->drive(80);
-    WAIT_UNTIL_TRUE(robot->isIdle());
-    ThisThread::sleep_for(50ms);
+    //robot->drive(80);
+    //WAIT_UNTIL_TRUE(robot->isIdle());
+    //ThisThread::sleep_for(50ms);
 
     robot->setJointAngles(155, 90);
     WAIT_UNTIL_TRUE(robot->isIdle());
@@ -170,13 +170,13 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
-    robot->drive(155);
+    robot->drive(190);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
 
     // stand up front
-    robot->setJointAngles(115, 0, Robot::JointCorrectionMode::Back);
+    robot->setJointAngles(125, 0, Robot::JointCorrectionMode::Back);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(4s);
 
