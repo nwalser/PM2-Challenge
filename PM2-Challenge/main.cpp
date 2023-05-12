@@ -107,7 +107,7 @@ int main() {
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
-    robot->setJointAngles(20, 130);
+    robot->setJointAngles(20, 125);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(4s);
 
