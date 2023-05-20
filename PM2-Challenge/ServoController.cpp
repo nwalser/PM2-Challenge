@@ -64,7 +64,7 @@ void ServoController::run() {
 
       // wait because we don't know where the servo is
       ThisThread::sleep_for(500ms);
-      _servo->disable();
+      //_servo->disable();
 
       _state = States::Idle;
       break;
@@ -78,7 +78,7 @@ void ServoController::run() {
     }
 
     case States::StartMoving: {
-      _servo->enable();
+      //_servo->enable();
       _time_delta.reset();
 
       _state = States::Moving;
@@ -108,6 +108,6 @@ void ServoController::run() {
     }
 
     // run approximately every 20ms
-    ThisThread::sleep_for(10ms);
+    ThisThread::sleep_for(100ms);
   }
 }

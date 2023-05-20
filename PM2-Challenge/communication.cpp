@@ -28,5 +28,7 @@ void Communicator::run(){
 
             _value_messages.free(message);
         }
+
+        ThisThread::sleep_for(100ms);
     }
 }
