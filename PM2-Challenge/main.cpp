@@ -115,7 +115,7 @@ int main() {
     robot->setJointAngles(90, 160, Robot::JointCorrectionMode::None);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    robot->drive(80);
+    robot->drive(85);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
     // robot is buckled up against the obstacle
@@ -129,16 +129,16 @@ int main() {
     robot->setJointAngles(0, 0, Robot::JointCorrectionMode::Both);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    robot->drive(10);
+    robot->drive(15);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
     robot->setJointAngles(0, 135);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    robot->setJointAngles(35, 135);
+    robot->setJointAngles(40, 135);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    robot->drive(90);
+    robot->drive(95);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
     robot->setJointAngles(155, 90);
@@ -147,12 +147,12 @@ int main() {
     robot->setJointAngles(90, 90);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
-    robot->drive(165);
+    robot->drive(180);
     WAIT_UNTIL_TRUE(robot->isIdle());
 
 
     // stand up front
-    robot->setJointAngles(130, 0, Robot::JointCorrectionMode::Back);
+    robot->setJointAngles(125, 0, Robot::JointCorrectionMode::Back);
     WAIT_UNTIL_TRUE(robot->isIdle());
     ThisThread::sleep_for(50ms);
 
