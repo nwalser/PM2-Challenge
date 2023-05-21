@@ -5,6 +5,8 @@
 
 #define EPS 0.001
 #define PI 3.14159265359
+#define CYCLE_TIME 20ms
+
 
 Robot::Robot(ServoController *servo_joint_front,
              ServoController *servo_joint_back,
@@ -26,7 +28,7 @@ Robot::Robot(ServoController *servo_joint_front,
 void Robot::init() {
   _initialize = true;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::standUp(JointCorrectionMode mode) {
@@ -34,7 +36,7 @@ void Robot::standUp(JointCorrectionMode mode) {
   _commanded_angle_back = 0;
   _commanded_angle_front = 0;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::sitDown(JointCorrectionMode mode) {
@@ -42,7 +44,7 @@ void Robot::sitDown(JointCorrectionMode mode) {
   _commanded_angle_back = 90;
   _commanded_angle_front = 90;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::bowForward(JointCorrectionMode mode) {
@@ -50,7 +52,7 @@ void Robot::bowForward(JointCorrectionMode mode) {
   _commanded_angle_back = 0;
   _commanded_angle_front = 135;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::bowBackward(JointCorrectionMode mode) {
@@ -58,7 +60,7 @@ void Robot::bowBackward(JointCorrectionMode mode) {
   _commanded_angle_back = 135;
   _commanded_angle_front = 0;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::setJointAngles(double back, double front,
@@ -67,13 +69,13 @@ void Robot::setJointAngles(double back, double front,
   _commanded_angle_back = back;
   _commanded_angle_front = front;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void Robot::drive(double distance_in_mm) {
   _commanded_relative_movement = distance_in_mm;
 
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 bool Robot::isIdle() { return _state == States::Idle; }
@@ -199,7 +201,11 @@ void Robot::run() {
     }
     }
 
-    ThisThread::sleep_for(50ms);
+
+    // this robot class will not run with a constant cycle time, because of the 
+    // sleeped calls to the ServoController class. But it works for now without 
+    // constant cycle time. So if it aint broken dont fix it :D
+    ThisThread::sleep_for(CYCLE_TIME);
   }
 }
 

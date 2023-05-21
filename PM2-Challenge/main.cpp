@@ -8,7 +8,6 @@
 #include "PositionController.h"
 #include "Servo.h"
 #include "ServoController.h"
-#include "communication.h"
 #include "mbed.h"
 #include "robot.h"
 #include <cmath>
@@ -16,7 +15,6 @@
 
 // setup communication stack
 BufferedSerial serial(USBTX, USBRX, 115200);
-//Communicator *communicator = new Communicator();
 FileHandle *mbed::mbed_override_console(int fd) { return &serial; }
 
 #pragma region macros
@@ -44,16 +42,16 @@ int main() {
   Servo *servo_joint_front = new Servo(PC_8);
   Motion *motion_planner_front = new Motion();
   motion_planner_front->setLimits(50, 30, 30);
-  Map *angle_map_front = new Map(0, 175, 0.035, 0.125);
+  Map *angle_map_front = new Map(0, 175, 0.032, 0.120);
   ServoController *servo_controller_front = new ServoController(
       servo_joint_front, motion_planner_front, angle_map_front);
 
   // SERVO PB_2
   // create back servo controller
-  Servo *servo_joint_back = new Servo(PB_2);
+  Servo *servo_joint_back = new Servo(PB_12);
   Motion *motion_planner_back = new Motion();
   motion_planner_back->setLimits(50, 30, 30);
-  Map *angle_map_back = new Map(0, 150, 0.035, 0.115);
+  Map *angle_map_back = new Map(0, 160, 0.033, 0.128);
   ServoController *servo_controller_back = new ServoController(
       servo_joint_back, motion_planner_back, angle_map_back);
 
@@ -101,6 +99,28 @@ int main() {
   printf("Ready \n");
   // wait until blue user button is pressed
   WAIT_UNTIL_TRUE(!user_button->read());
+
+
+  while (true) {
+    robot->setJointAngles(0, 0);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    printf("On 0 \n");
+
+    ThisThread::sleep_for(4s);
+
+    robot->setJointAngles(90, 90);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    printf("On 90 \n");
+
+    ThisThread::sleep_for(4s);
+
+    robot->setJointAngles(160, 160);
+    WAIT_UNTIL_TRUE(robot->isIdle());
+    printf("On 160 \n");
+
+    ThisThread::sleep_for(4s);
+  }
+
 
   while (true) {
     robot->setJointAngles(0, 0);

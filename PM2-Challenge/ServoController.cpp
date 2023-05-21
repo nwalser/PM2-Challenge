@@ -2,6 +2,7 @@
 #include <cstdio>
 
 #define EPS 0.001
+#define CYCLE_TIME 5ms
 
 ServoController::ServoController(Servo *servo, Motion *motion_planner,
                                  Map *angle_map) {
@@ -20,7 +21,7 @@ void ServoController::setAngle(double angle_in_deg) {
 
   // wait for 10ms to be sure that the state machine got the chance to flip to
   // the correct state, should be synced with thread to be 100% save, TODO
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 void ServoController::init(double angle_in_deg) {
@@ -29,7 +30,7 @@ void ServoController::init(double angle_in_deg) {
 
   // wait for 10ms to be sure that the state machine got the chance to flip to
   // the correct state, should be synced with thread to be 100% save, TODO
-  ThisThread::sleep_for(10ms);
+  ThisThread::sleep_for(CYCLE_TIME * 2);
 }
 
 bool ServoController::isIdle() { return _state == States::Idle; }
@@ -62,8 +63,8 @@ void ServoController::run() {
       _servo->enable();
       _servo->setNormalisedAngle(normalised_angle);
 
-      // wait because we don't know where the servo is
-      ThisThread::sleep_for(500ms);
+      // wait until servo it at init, because we don't know where the servo is
+      ThisThread::sleep_for(800ms);
       _servo->disable();
 
       _state = States::Idle;
@@ -108,6 +109,6 @@ void ServoController::run() {
     }
 
     // run approximately every 20ms
-    ThisThread::sleep_for(10ms);
+    ThisThread::sleep_for(CYCLE_TIME);
   }
 }
